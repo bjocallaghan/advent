@@ -1,0 +1,33 @@
+(ns net.bjoc.advent.util.coords-test
+  (:use [clojure.test :only [is testing deftest]]
+        [net.bjoc.advent.util.coords]))
+
+(deftest add-coords-sanity
+  (testing "Should handle arbitrary number of arguments"
+    (is (= [1 2] (add-coords [1 2])))
+    (is (= [4 6] (add-coords [1 2] [3 4])))
+    (is (= [9 12] (add-coords [1 2] [3 4] [5 6])))
+    (is (= [16 20] (add-coords [1 2] [3 4] [5 6] [7 8]))))
+  (testing "Should handle arbitrary number of dimensions"
+    (is (= [3] (add-coords [1] [2])))
+    (is (= [4 6] (add-coords [1 2] [3 4])))
+    (is (= [5 7 9] (add-coords [1 2 3] [4 5 6])))
+    (is (= [6 8 10 12] (add-coords [1 2 3 4] [5 6 7 8]))))
+  (testing "Must have one or more arguments"
+    (is (thrown? clojure.lang.ArityException (add-coords))))
+  (testing "All arguments must be vectors of the same dimension"
+    (is (thrown? Exception (add-coords [1 2] [3 4 5])))))
+
+(deftest manhattan-distance-sanity
+  (testing "Manhattan distance from origin"
+    (doseq [[coords expected-distance] [[[3 4] 7]
+                                        [[-3 4] 7]
+                                        [[-3 -4] 7]
+                                        [[3 -4] 7]
+                                        [[12 0] 12]
+                                        [[0 -12] 12]]]
+      (is (= expected-distance (manhattan-distance coords))
+          (format "Expected distance of %s: %s"
+                  (str coords) expected-distance))))
+  (testing "Manhattan distance between two points"
+    (is (= 4 (manhattan-distance [1 2] [3 4])))))

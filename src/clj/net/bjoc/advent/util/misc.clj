@@ -12,3 +12,8 @@
 (def null-writer
   "A stream-writer that does nothing when written to. Like /dev/null."
   (proxy [java.io.Writer] [] (write [s])))
+
+(defn find-first
+  "Return the first element of a collection that satisfies a predicate."
+  [pred coll]
+  (first (filter pred coll)))

@@ -8,3 +8,7 @@
   https://docs.python.org/3/library/functions.html#zip"
   [& colls]
   (partition (count colls) (apply interleave colls)))
+
+(def null-writer
+  "A stream-writer that does nothing when written to. Like /dev/null."
+  (proxy [java.io.Writer] [] (write [s])))

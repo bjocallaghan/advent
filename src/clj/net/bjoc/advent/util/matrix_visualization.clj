@@ -59,7 +59,7 @@
   (let [paint-value-fn (or paint-value-fn
                            (apply (partial guess-paint-value-fn matrix)
                                   (mapcat identity options)))
-        scale (/ img-size (mtx/size matrix))
+        scale (/ img-size (apply max (mtx/size matrix)))
         img (new BufferedImage img-size img-size
                  (. BufferedImage TYPE_INT_ARGB))
         g (. img (getGraphics))]

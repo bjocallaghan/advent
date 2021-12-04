@@ -1,8 +1,9 @@
 (ns net.bjoc.advent.util.matrix-test
+  (:require [net.bjoc.advent.util.misc :as misc])
   (:use [clojure.test :only [is testing deftest]]
         [net.bjoc.advent.util.matrix]))
 
-(def normal-2x2
+(def numbers-2x2
   {[0 0] 1  [1 0] 2
    [0 1] 3  [1 1] 4})
 
@@ -14,7 +15,7 @@
   {[0 0] 2  [1 0] 1
    [0 1] 4  [1 1] 3})
 
-(def normal-4x4
+(def numbers-4x4
   {[0 0] 1   [1 0] 2   [2 0] 3   [3 0] 4
    [0 1] 5   [1 1] 6   [2 1] 7   [3 1] 8
    [0 2] 9   [1 2] 10  [2 2] 11  [3 2] 12
@@ -38,22 +39,65 @@
    [0 2] 12  [1 2] 11  [2 2] 10  [3 2] 9
    [0 3] 16  [1 3] 15  [2 3] 14  [3 3] 13})
 
+(def small-strings-2x2
+  {[0 0] "a" [1 0] "b"
+   [0 1] "c" [1 1] "d"})
+
+(def strings-3x2
+  {[0 0] "abcd" [1 0] "efg" [2 0] "hijkl"
+   [0 1] "mno" [1 1] "pqrs" [2 1] "tuv"})
+
+(def characters-2x2
+  {[0 0] \a [1 0] \b
+   [0 1] \c [1 1] \d})
+
+(def sparse-characters-2x2
+  {[0 0] \space [1 0] \x
+   [0 1] \space [1 1] \space})
+
 (deftest rotate-sanity
   (testing "Normal rotation operations"
-    (is (= rotated-2x2 (rotate normal-2x2)))
-    (is (= rotated-4x4 (rotate normal-4x4))))
+    (is (= rotated-2x2 (rotate numbers-2x2)))
+    (is (= rotated-4x4 (rotate numbers-4x4))))
   (testing "Repetitive operations"
-    (is (= left-rotated-4x4 (rotate normal-4x4 3)))
-    (is (= normal-4x4 (rotate normal-4x4 4)))
-    (is (= rotated-4x4 (rotate normal-4x4 5)))
-    (is (= left-rotated-4x4 (rotate normal-4x4 -1)))))
+    (is (= left-rotated-4x4 (rotate numbers-4x4 3)))
+    (is (= numbers-4x4 (rotate numbers-4x4 4)))
+    (is (= rotated-4x4 (rotate numbers-4x4 5)))
+    (is (= left-rotated-4x4 (rotate numbers-4x4 -1)))))
 
 (deftest flip-sanity
   (testing "Normal flip operations"
-    (is (= flipped-2x2 (flip normal-2x2)))
-    (is (= flipped-4x4 (flip normal-4x4))))
+    (is (= flipped-2x2 (flip numbers-2x2)))
+    (is (= flipped-4x4 (flip numbers-4x4))))
   (testing "Repetitive flip operations"
-    (is (= normal-4x4 (flip normal-4x4 2)))
-    (is (= normal-4x4 (flip normal-4x4 4)))
-    (is (= flipped-4x4 (flip normal-4x4 3)))
-    (is (= flipped-4x4 (flip normal-4x4 -1)))))
+    (is (= numbers-4x4 (flip numbers-4x4 2)))
+    (is (= numbers-4x4 (flip numbers-4x4 4)))
+    (is (= flipped-4x4 (flip numbers-4x4 3)))
+    (is (= flipped-4x4 (flip numbers-4x4 -1)))))
+
+(deftest size-sanity
+  (is (= [2 2] (size small-strings-2x2)))
+  (is (= [3 2] (size strings-3x2)))
+  (is (= [4 4] (size numbers-4x4))))
+
+(deftest guess-type-by-examples
+  (testing "Guessing matrix types"
+    (is (= :numbers (guess-type numbers-2x2)))
+    (is (= :characters (guess-type characters-2x2)))
+    (is (= :characters (guess-type small-strings-2x2)))
+    (is (= :strings (guess-type strings-3x2)))))
+
+(deftest dump-by-examples
+  (is (= " 1  2  3  4\n 5  6  7  8\n 9 10 11 12\n13 14 15 16"
+         (dump numbers-4x4 :stream-writer misc/null-writer)))
+  (is (= "ab\ncd"
+         (dump small-strings-2x2 :stream-writer misc/null-writer)))
+  (is (= "ab\ncd"
+         (dump characters-2x2 :stream-writer misc/null-writer)))
+  (is (= "abcd  efg hijkl\n mno pqrs   tuv"
+         (dump strings-3x2 :stream-writer misc/null-writer))))
+
+(deftest from-string-by-examples
+  (is (= numbers-2x2 (from-string "1 2\n3 4")))
+  (is (= characters-2x2 (from-string "ab\ncd")))
+  (is (= sparse-characters-2x2 (from-string " x\n  " :type :characters))))

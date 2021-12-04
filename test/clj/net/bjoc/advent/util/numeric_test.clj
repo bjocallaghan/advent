@@ -2,6 +2,12 @@
   (:use [clojure.test :only [is testing deftest]]
         [net.bjoc.advent.util.numeric]))
 
+(deftest int-str?-by-examples
+  (is (int-str? "0"))
+  (is (int-str? "4"))
+  (is (int-str? "123"))
+  (is (int-str? "-123")))
+
 (deftest prime-trial-division
   (testing "Prime recognizer: trial division algorithm"
     (doseq [n [2 3 5 7 11 13]]

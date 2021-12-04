@@ -1,5 +1,11 @@
 (ns net.bjoc.advent.util.numeric)
 
+(defn int-str?
+  "Return truthy if the input is a parsable integer string."
+  [x]
+  (and (string? x)
+       (re-find #"^-?\d+$" x)))
+
 (defn int-seq
   "Return an infinite sequence of integers."
   [starting-n]

@@ -103,7 +103,5 @@
                    [col c] (map-indexed vector line)]
                [[col row] c])
              (for [[row line] (map-indexed vector lines)
-                   [col s] (map-indexed vector (str/split line #"\s+"))]
+                   [col s] (map-indexed vector (str/split (str/trim line) #"\s+"))]
                [[col row] s]))))))
-          
-;; (from-string "ab\ncd")

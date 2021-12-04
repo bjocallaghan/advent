@@ -88,14 +88,23 @@
     (is (= :strings (guess-type strings-3x2)))))
 
 (deftest dump-by-examples
-  (is (= " 1  2  3  4\n 5  6  7  8\n 9 10 11 12\n13 14 15 16"
-         (dump numbers-4x4 :stream-writer misc/null-writer)))
-  (is (= "ab\ncd"
-         (dump small-strings-2x2 :stream-writer misc/null-writer)))
-  (is (= "ab\ncd"
-         (dump characters-2x2 :stream-writer misc/null-writer)))
-  (is (= "abcd  efg hijkl\n mno pqrs   tuv"
-         (dump strings-3x2 :stream-writer misc/null-writer))))
+  (let [dump* #(dump % :stream-writer misc/null-writer)]
+    (testing "Dump by examples"
+      (is (= " 1  2  3  4\n 5  6  7  8\n 9 10 11 12\n13 14 15 16"
+             (dump* numbers-4x4)))
+      (is (= "ab\ncd"
+             (dump* small-strings-2x2)))
+      (is (= "ab\ncd"
+             (dump* characters-2x2)))
+      (is (= "abcd  efg hijkl\n mno pqrs   tuv"
+             (dump* strings-3x2))))
+    (testing "Dump/read cycles"
+      (is (= (-> numbers-2x2 dump*)
+             (-> numbers-2x2 dump* from-string dump*)))
+      (is (= (-> numbers-4x4 dump*)
+             (-> numbers-4x4 dump* from-string dump*)))
+      (is (= (-> strings-3x2 dump*)
+             (-> strings-3x2 dump* from-string dump*))))))
 
 (deftest from-string-by-examples
   (is (= numbers-2x2 (from-string "1 2\n3 4")))

@@ -6,6 +6,8 @@
   (and (string? x)
        (re-find #"^-?\d+$" x)))
 
+(def parse-int "Convert a string to an integer." #(Integer/parseInt %))
+
 (defn int-seq
   "Return an infinite sequence of integers."
   [starting-n]
@@ -21,7 +23,7 @@
       (recur (quot n 10) (conj digits (mod n 10))))))
 
 (defn TRIAL_DIVISION*not-prime?
-  "Returns truthy for a non-prime number.
+  "Return truthy for a non-prime number.
 
   The return value is generally (but not guaranteed) to be a divisor.
 
@@ -39,10 +41,13 @@
                           (when (< divisor limit)
                             (recur (+ divisor 2))))))))
 
-(def TRIAL_DIVISION*prime? "Returns truthy for a prime number."
+(def TRIAL_DIVISION*prime? "Return truthy for a prime number."
   (complement TRIAL_DIVISION*not-prime?))
 
 ;;; defaults
 
-(def prime? TRIAL_DIVISION*prime?)
-(def not-prime? TRIAL_DIVISION*not-prime?)
+(def prime? "Returns truthy for a prime number."
+  TRIAL_DIVISION*prime?)
+
+(def not-prime? "Return truthy for a non-prime number."
+  TRIAL_DIVISION*not-prime?)

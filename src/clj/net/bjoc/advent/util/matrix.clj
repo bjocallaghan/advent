@@ -31,10 +31,26 @@
      matrix)))
 
 (defn size
+  "Return a sequence of the dimensional sizes of a matrix."
   [matrix]
   (into [] (for [i (range (-> matrix keys first count))]
              (->> matrix keys (map #(nth % i)) (apply max) inc))))
 
+(defn rows
+  "Return the row values of a two dimensional matrix."
+  [matrix]
+  (let [[num-cols num-rows] (size matrix)]
+    (for [row (range num-rows)]
+      (->> (map vector (range num-cols) (repeat row))
+           (map matrix)))))
+
+(defn cols
+  "Return the column values of a two dimensional matrix."
+  [matrix]
+  (let [[num-cols num-rows] (size matrix)]
+    (for [col (range num-cols)]
+      (->> (map vector (repeat col) (range num-rows))
+           (map matrix)))))
 
 (def ^:private single-char-string? #(and (string? %) (= 1 (count %))))
 
@@ -47,24 +63,20 @@
       (every? single-char-string? m-vals) :characters
       (every? number? m-vals) :numbers
       (every? string? m-vals) :strings
+      (every? keyword? m-vals) :keywords
       :else (throw
              (ex-info "Cannot determine matrix type based on element values."
                       {:values m-vals})))))
 
 (defn dump
-  "Write a representation of the matrix."
-  [matrix & {:keys [stream-writer] :or {stream-writer *out*} :as options}]
-  (let [sz (size matrix)
-        s (str/join "\n"
-                    (for [row (range sz)]
-                      (str/join (map #(matrix [% row]) (range sz)))))]
-    (.write stream-writer (format "%s\n" s))
-    s))
-
-(defn dump
   "Write a string representation of the matrix."
-  [matrix & {:keys [stream-writer] :or {stream-writer *out*} :as options}]
-  (let [separator (if (= :characters (guess-type matrix)) "" " ")
+  [matrix
+   & {:keys [stream-writer value-repr-fn]
+      :or {stream-writer *out*
+           value-repr-fn identity}
+      :as options}]
+  (let [matrix (reduce-kv (fn [m k v] (assoc m k (value-repr-fn v))) {} matrix)
+        separator (if (= :characters (guess-type matrix)) "" " ")
         matrix (reduce (fn [m [k v]] (update m k str v)) {} matrix)
         [num-cols num-rows] (size matrix)
         column-widths (for [i (range num-cols)]

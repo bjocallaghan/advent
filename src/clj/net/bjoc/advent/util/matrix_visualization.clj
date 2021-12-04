@@ -47,16 +47,19 @@
     :else
     (case (mtx/guess-type matrix)
       :characters (partial palletted-paint-char-value (generate-pallette matrix))
+      :keywords (partial palletted-paint-char-value (generate-pallette matrix))
       )))
 
 (defn image
   "Return a bitmap image of a matrix."
   [matrix
-   & {:keys [paint-value-fn img-size background-color]
+   & {:keys [paint-value-fn img-size background-color value-repr-fn]
       :or {img-size 500
-           background-color (. Color white)}
+           background-color (. Color white)
+           value-repr-fn identity}
       :as options}]
-  (let [paint-value-fn (or paint-value-fn
+  (let [matrix (reduce-kv (fn [m k v] (assoc m k (value-repr-fn v))) {} matrix)
+        paint-value-fn (or paint-value-fn
                            (apply (partial guess-paint-value-fn matrix)
                                   (mapcat identity options)))
         scale (/ img-size (apply max (mtx/size matrix)))
@@ -96,14 +99,17 @@
   Additionally, the implementation is further complicated by code to keep the
   image centered in the frame."
   [matrix
-   & {:keys [window-size paint-value-fn]
-      :or {window-size 800}
+   & {:keys [window-size paint-value-fn value-repr-fn]
+      :or {window-size 800
+           value-repr-fn identity}
       :as options}]
-  (let [paint-value-fn (or paint-value-fn
+  (let [matrix (reduce-kv (fn [m k v] (assoc m k (value-repr-fn v))) {} matrix)
+        paint-value-fn (or paint-value-fn
                            (apply (partial guess-paint-value-fn matrix)
                                   (mapcat identity options)))
         img-fn #(apply (partial image matrix)
                        (mapcat identity (-> options
+                                            (dissoc :value-repr-fn)
                                             (assoc :paint-value-fn paint-value-fn)
                                             (assoc :img-size %))))
         paint-panel-fn (fn [panel g]

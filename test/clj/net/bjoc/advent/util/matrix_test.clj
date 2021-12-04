@@ -51,6 +51,10 @@
   {[0 0] \a [1 0] \b
    [0 1] \c [1 1] \d})
 
+(def keywords-2x2
+  {[0 0] :abc [1 0] :def
+   [0 1] :ghi [1 1] :jkl})
+
 (def sparse-characters-2x2
   {[0 0] \space [1 0] \x
    [0 1] \space [1 1] \space})
@@ -80,6 +84,14 @@
   (is (= [3 2] (size strings-3x2)))
   (is (= [4 4] (size numbers-4x4))))
 
+(deftest rows-by-examples
+  (is (= [[1 2] [3 4]] (rows numbers-2x2)))
+  (is (= [["abcd" "efg" "hijkl"] ["mno" "pqrs" "tuv"]] (rows strings-3x2))))
+
+(deftest cols-by-examples
+  (is (= [[1 3] [2 4]] (cols numbers-2x2)))
+  (is (= [["abcd" "mno"] ["efg" "pqrs"] ["hijkl" "tuv"]] (cols strings-3x2))))
+
 (deftest guess-type-by-examples
   (testing "Guessing matrix types"
     (is (= :numbers (guess-type numbers-2x2)))
@@ -96,6 +108,8 @@
              (dump* small-strings-2x2)))
       (is (= "ab\ncd"
              (dump* characters-2x2)))
+      (is (= ":abc :def\n:ghi :jkl"
+             (dump* keywords-2x2)))
       (is (= "abcd  efg hijkl\n mno pqrs   tuv"
              (dump* strings-3x2))))
     (testing "Dump/read cycles"

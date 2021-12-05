@@ -1,3 +1,5 @@
+/// Advent of Code - 2020 - Day 23
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -155,4 +157,5 @@ int main(int argc, char *argv[]) {
   printf("product = %lld\n", v1 * v2);
 
   free(nodes);
+  free(nodes_by_label);
 }

@@ -117,3 +117,19 @@
              (for [[row line] (map-indexed vector lines)
                    [col s] (map-indexed vector (str/split (str/trim line) #"\s+"))]
                [[col row] s]))))))
+
+(defn from-file
+  "Return a matrix based on an input file."
+  [filename & options]
+  (apply (partial from-string (slurp filename))
+         (mapcat identity options)))
+
+(defn transform?
+  "Return truthy if one matrix is equivalent (a flipped or rotated version) of
+  another."
+  [matrix-1 matrix-2]
+  (some identity (for [num-rotations (range 4)
+                       num-flips (range 2)]
+                   (= matrix-1 (-> matrix-2
+                                   (rotate num-rotations)
+                                   (flip num-flips))))))

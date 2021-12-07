@@ -17,3 +17,8 @@
 (deftest find-first-sanity
   (is (= 4 (find-first even? [1 3 5 4 5 2 6])))
   (is (nil? (find-first even? [1 3 5]))))
+
+(deftest first-sanity
+  (is (= 4 (single [4])))
+  (is (thrown? Exception (single [])))
+  (is (thrown? Exception (single [4 5 6]))))

@@ -124,3 +124,8 @@
   (is (= numbers-2x2 (from-string "1 2\n3 4")))
   (is (= characters-2x2 (from-string "ab\ncd")))
   (is (= sparse-characters-2x2 (from-string " x\n  " :type :characters))))
+
+(deftest transform?-by-example
+  (is (transform? numbers-4x4 flipped-4x4))
+  (is (transform? numbers-4x4 rotated-4x4))
+  (is (not (transform? numbers-4x4 numbers-2x2))))

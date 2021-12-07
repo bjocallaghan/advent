@@ -64,8 +64,8 @@
                                   (mapcat identity options)))
         [num-cols num-rows] (mtx/size matrix)
         scale (/ (double (apply max img-size)) (apply max (mtx/size matrix)))
-        px-x-size (Math/round (* scale (/ (first img-size) num-cols)))
-        px-y-size (Math/round (* scale (/ (second img-size) num-rows)))
+        px-x-size (Math/round (* scale num-cols))
+        px-y-size (Math/round (* scale num-rows))
         x-intervals (map #(Math/round (* scale %)) (range (inc num-cols)))
         y-intervals (map #(Math/round (* scale %)) (range (inc num-rows)))
         specs-map (into {}
@@ -90,7 +90,7 @@
 
 (defn write-image-file
   "Save an image of a matrix to a file."
-  [matrix dest-filename & options]
+  [matrix dest-filename & {:as options}]
   (when-not (re-find #"\.png$" dest-filename)
     (throw (ex-info "Destination filename must end in '.png'"
                     {:filename dest-filename})))

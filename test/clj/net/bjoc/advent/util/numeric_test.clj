@@ -8,6 +8,10 @@
   (is (int-str? "123"))
   (is (int-str? "-123")))
 
+(deftest exp-by-examples
+  (is (= 9 (exp 3 2)))
+  (is (= 8 (exp 2 3))))
+
 (deftest prime-trial-division
   (testing "Prime recognizer: trial division algorithm"
     (doseq [n [2 3 5 7 11 13]]

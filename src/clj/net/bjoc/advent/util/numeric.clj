@@ -22,6 +22,11 @@
       (reverse digits)
       (recur (quot n 10) (conj digits (mod n 10))))))
 
+(defn exp
+  "Raise a number to a power."
+  [number exponent]
+  (reduce * (repeat exponent number)))
+
 (defn TRIAL_DIVISION*not-prime?
   "Return truthy for a non-prime number.
 

@@ -54,7 +54,7 @@
   "Return a bitmap image of a matrix."
   [matrix
    & {:keys [paint-value-fn img-size background-color value-repr-fn]
-      :or {img-size 500
+      :or {img-size [500 500]
            background-color (. Color white)
            value-repr-fn identity}
       :as options}]
@@ -62,16 +62,30 @@
         paint-value-fn (or paint-value-fn
                            (apply (partial guess-paint-value-fn matrix)
                                   (mapcat identity options)))
-        scale (/ img-size (apply max (mtx/size matrix)))
-        img (new BufferedImage img-size img-size
+        [num-cols num-rows] (mtx/size matrix)
+        scale (/ (double (apply max img-size)) (apply max (mtx/size matrix)))
+        px-x-size (Math/round (* scale (/ (first img-size) num-cols)))
+        px-y-size (Math/round (* scale (/ (second img-size) num-rows)))
+        x-intervals (map #(Math/round (* scale %)) (range (inc num-cols)))
+        y-intervals (map #(Math/round (* scale %)) (range (inc num-rows)))
+        specs-map (into {}
+                        (for [x (range num-cols)
+                              y (range num-rows)]
+                          [[x y]
+                           {:x (nth x-intervals x)
+                            :y (nth y-intervals y)
+                            :width (- (nth x-intervals (inc x)) (nth x-intervals x))
+                            :height (- (nth y-intervals (inc y)) (nth y-intervals y))}]))
+        img (new BufferedImage px-x-size px-y-size
                  (. BufferedImage TYPE_INT_ARGB))
         g (. img (getGraphics))]
     (doto g
       (.setColor background-color)
-      (.fillRect 0 0 img-size img-size))
+      (.fillRect 0 0 px-x-size px-y-size))
     (dorun
-     (for [[[x y] v] matrix]
-       (paint-value-fn g (* x scale) (* y scale) scale scale v)))
+     (for [[xy v] matrix]
+       (let [{:keys [x y width height]} (specs-map xy)]
+         (paint-value-fn g x y width height v))))
     img))
 
 (defn write-image-file
@@ -117,7 +131,7 @@
                                lim (min x y)
                                x-offset (-> x (- lim) (quot 2))
                                y-offset (-> y (- lim) (quot 2))
-                               img (img-fn lim)]
+                               img (img-fn [lim lim])]
                            (. g (drawImage img x-offset y-offset nil))
                            (.dispose (. img (getGraphics)))))
         panel (doto (proxy [JPanel] []

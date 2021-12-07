@@ -229,39 +229,3 @@
   (println
    "Day 20 - Part 2 - Rough water score of assembled map:"
    (file->rough-water-score "data/year_2020/day_20.input")))
-
-;;;
-
-(comment
-  ;; calculate once
-  (def assembled
-    (-> (file->tiles "data/year_2020/day_20.input")
-        assemble))
-
-  ;; look for the transform that actually contains monsters; it was actually the first
-  (into {}
-        (for [num-rotations (range 4)
-              num-flips (range 2)]
-          [[num-rotations num-flips] (-> assembled
-                                         (mtx/rotate num-rotations)
-                                         (mtx/flip num-flips)
-                                         mark-monsters
-                                         vals
-                                         frequencies)]))
-
-  (require '[net.bjoc.advent.util.matrix-visualization :as vis])
-
-  ;; definitely want a good color scheme
-  (def ocean-pallette {\O (. java.awt.Color getHSBColor (/ 133 360) 0.87 0.24)
-                       \. (. java.awt.Color getHSBColor (/ 214 360) 0.83 0.65)
-                       \# (. java.awt.Color getHSBColor (/ 214 360) 0.62 0.85)})
-
-  ;; visualize without monsters
-  (-> assembled
-      (vis/show :pallette ocean-pallette))
-
-  ;; visualize with monsters
-  (-> assembled
-      mark-monsters
-      (vis/show :pallette ocean-pallette))
-  )

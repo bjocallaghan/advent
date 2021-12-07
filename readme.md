@@ -48,3 +48,29 @@ visualizing.
     (mtx/rotate 2)
     mtx/dump)                          ;; string together operations before dumping
 ```
+
+## util/matrix_visualizations.clj
+
+Beyond dumping a matrix to text, sometimes it's nice to look at a bitmap.
+
+```clojure
+(require '[net.bjoc.advent.util.matrix-visualization :as vis])
+
+;; definitely want a good color scheme
+(import '[java.awt Color])
+(def ocean-pallette {\O (. Color getHSBColor (/ 133 360) 0.87 0.24)
+                     \. (. Color getHSBColor (/ 214 360) 0.83 0.65)
+                     \# (. Color getHSBColor (/ 214 360) 0.62 0.85)})
+
+;; write an image file
+(use '[net.bjoc.advent.year-2020.day-20])
+(-> "data/year_2020/day_20.input"
+    file->tiles
+    assemble
+    mark-monsters
+    (vis/write-image-file "visualizations/2020_day_20.png"
+                          :img-size [800 800] :pallette ocean-pallette))
+```
+
+![2020 Day 20 Visualization](visualizations/2020_day_20.png)
+

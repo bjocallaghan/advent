@@ -1,5 +1,6 @@
 (ns net.bjoc.advent.year-2021.day-2
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [net.bjoc.advent.core :as advent]))
 
 (defn string->command [s]
   (let [[a b] (str/split s #" ")]
@@ -23,10 +24,7 @@
         {:keys [horizontal depth]} (reduce execute starting-location commands)]
     (* horizontal depth)))
 
-(defn part-1 []
-  (println
-   "Day 2 - Part 1 - Location product: horizontal * depth:"
-   (file->location-product "data/year_2021/day_2.input")))
+;;;
 
 (defn execute* [{:keys [horizontal depth aim] :as location} [instruction magnitude]]
   (cond
@@ -41,7 +39,7 @@
         {:keys [horizontal depth]} (reduce execute* starting-location commands)]
     (* horizontal depth)))
 
-(defn part-2 []
-  (println
-   "Day 2 - Part 2 - Location product: horizontal * depth:"
-   (file->location-product* "data/year_2021/day_2.input")))
+;;;
+
+(advent/defrunner 1 file->location-product "Horizontal * Depth")
+(advent/defrunner 2 file->location-product* "Horizontal * Depth (modified)")

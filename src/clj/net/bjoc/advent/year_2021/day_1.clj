@@ -1,6 +1,7 @@
 (ns net.bjoc.advent.year-2021.day-1
   (:use [net.bjoc.advent.util.misc :only [zip]])
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [net.bjoc.advent.core :as advent]))
 
 (defn file->depths [filename]
   (map #(Integer/parseInt %)
@@ -13,10 +14,7 @@
          (filter #(apply < %))
          count)))
   
-(defn part-1 []
-  (println
-   "Day 1 - Part 1 - Number of depth drops:"
-   (file->num-depths-increases "data/year_2021/day_1.input")))
+;;;
 
 (defn file->num-window-increases [filename]
   (let [depths (file->depths filename)
@@ -26,7 +24,7 @@
          (filter #(apply < %))
          count)))
 
-(defn part-2 []
-  (println
-   "Day 1 - Part 2 - Number of window increases:"
-   (file->num-window-increases "data/year_2021/day_1.input")))
+;;;
+
+(advent/defrunner 1 file->num-depths-increases "Number of depth drops")
+(advent/defrunner 2 file->num-window-increases "Number of window increases")

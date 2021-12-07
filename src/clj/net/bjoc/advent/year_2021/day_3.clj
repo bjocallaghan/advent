@@ -1,5 +1,6 @@
 (ns net.bjoc.advent.year-2021.day-3
   (:require [clojure.string :as str]
+            [net.bjoc.advent.core :as advent]
             [net.bjoc.advent.util.binary :as b]))
 
 (defn file->diagnostics [filename]
@@ -30,10 +31,7 @@
 (defn file->power-consumption [filename]
   (-> filename file->diagnostics power-consumption))
 
-(defn part-1 []
-  (println
-   "Day 3 - Part 1 - Power consumption:"
-   (file->power-consumption "data/year_2021/day_3.input")))
+;;;
 
 (defn- most-prevalent-in-nth-place [diagnostics n]
   (let [m (-> (diagnostics-frequencies diagnostics)
@@ -73,7 +71,7 @@
 (defn file->life-support-rating [filename]
   (-> filename file->diagnostics life-support-rating))
 
-(defn part-2 []
-  (println
-   "Day 3 - Part 2 - Life support rating:"
-   (file->life-support-rating "data/year_2021/day_3.input")))
+;;;
+
+(advent/defrunner 1 file->power-consumption "Power consumption")
+(advent/defrunner 2 file->life-support-rating "Life support rating")

@@ -1,6 +1,7 @@
 (ns net.bjoc.advent.year-2021.day-7
   (:use [net.bjoc.advent.util.numeric :only [parse-int]])
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [net.bjoc.advent.core :as advent]))
 
 (defn file->positions [filename]
   (map parse-int (-> filename
@@ -21,10 +22,7 @@
        file->positions
        best-expenditure))
 
-(defn part-1 []
-  (println
-   "Day 7 - Part 1 - Most efficient total expenditure:"
-   (file->best-expenditure "data/year_2021/day_7.input")))
+;;;
 
 (defn fleet-expenditure* [fleet-positions target-position]
   (let [move-cost (fn [a b]
@@ -42,8 +40,7 @@
   (->> filename
        file->positions
        best-expenditure*))
+;;;
 
-(defn part-2 []
-  (println
-   "Day 7 - Part 2 - Most efficient total expenditure (modified algorithm):"
-   (file->best-expenditure* "data/year_2021/day_7.input")))
+(advent/defrunner 1 file->best-expenditure "Best expenditure")
+(advent/defrunner 2 file->best-expenditure* "Best expenditure (modified)")

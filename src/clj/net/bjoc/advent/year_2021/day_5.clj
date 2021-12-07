@@ -1,5 +1,6 @@
 (ns net.bjoc.advent.year-2021.day-5
   (:require [clojure.string :as str]
+            [net.bjoc.advent.core :as advent]
             [net.bjoc.advent.util.numeric :as num]))
 
 (defn file->segments [filename]
@@ -41,11 +42,6 @@
        (filter (fn [[k v]] (> v 1)))
        count))
 
-(defn part-1 []
-  (println
-   "Day 5 - Part 1 - Number of dangerous points:"
-   (file->num-dangerous-points "data/year_2021/day_5.input")))
-
 (defn file->num-dangerous-points* [filename]
   (->> (file->segments filename)
        (mapcat segment-points)
@@ -53,7 +49,7 @@
        (filter (fn [[k v]] (> v 1)))
        count))
 
-(defn part-2 []
-  (println
-   "Day 5 - Part 1 - Number of dangerous points (modified algorithm):"
-   (file->num-dangerous-points* "data/year_2021/day_5.input")))
+;;;
+
+(advent/defrunner 1 file->num-dangerous-points "Dangerous points")
+(advent/defrunner 2 file->num-dangerous-points* "Dangerous points (modified)")

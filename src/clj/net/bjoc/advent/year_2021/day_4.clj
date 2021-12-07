@@ -1,5 +1,6 @@
 (ns net.bjoc.advent.year-2021.day-4
   (:require [clojure.string :as str]
+            [net.bjoc.advent.core :as advent]
             [net.bjoc.advent.util.numeric :as n]
             [net.bjoc.advent.util.matrix :as mtx]))
 
@@ -58,10 +59,7 @@
         {:keys [winning-card winning-draw]} (game draws cards)]
     (* (score winning-card) winning-draw)))
 
-(defn part-1 []
-  (println
-   "Day 4 - Part 1 - Winning score * final draw:"
-   (file->game-score "data/year_2021/day_4.input")))
+;;;
 
 (defn bad-game [draws cards]
   (let [draw (first draws)
@@ -78,7 +76,7 @@
         {:keys [winning-card winning-draw]} (bad-game draws cards)]
     (* (score winning-card) winning-draw)))
 
-(defn part-2 []
-  (println
-   "Day 4 - Part 2 - Winning score * final draw (bad strategy):"
-   (file->bad-game-score "data/year_2021/day_4.input")))
+;;;
+
+(advent/defrunner 1 file->game-score "Winning score * final draw")
+(advent/defrunner 2 file->bad-game-score "Winning score * final draw (bad)")

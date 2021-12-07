@@ -1,6 +1,7 @@
 (ns net.bjoc.advent.year-2021.day-6
   (:use [net.bjoc.advent.util.numeric :only [parse-int]])
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [net.bjoc.advent.core :as advent]))
 
 (defn file->state [filename]
   (->> (str/split (slurp filename) #",")
@@ -22,11 +23,6 @@
       file->state
       (step day)
       count))
-
-(defn part-1 []
-  (println
-   "Day 6 - Part 1 - Population after 80 days:"
-   (file->population-at-day "data/year_2021/day_6.input" 80)))
 
 ;; the setup and explanation for part 1 practically beg you to implement as an
 ;; ever growing array, leading to disaster at a larger number of iterations. but
@@ -61,7 +57,7 @@
                 (step* day)
                 vals)))
 
-(defn part-2 []
-  (println
-   "Day 6 - Part 2 - Population after 256 days:"
-   (file->population-at-day* "data/year_2021/day_6.input" 256)))
+;;;
+
+(advent/defrunner 1 file->population-at-day "Population at day 80" 80)
+(advent/defrunner 2 file->population-at-day* "Population at day 256" 256)

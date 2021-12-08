@@ -20,5 +20,8 @@
          :exec-fn cognitect.test-runner.api/test}
   :run {:exec-fn net.bjoc.advent.core/run
         :exec-args {:year 2019 :day 3}}
+  :new {:extra-paths ["automation/clj"]
+        :exec-fn net.bjoc.advent.automation/create-starters
+        :exec-args {:year nil :day nil}}
   }
  }

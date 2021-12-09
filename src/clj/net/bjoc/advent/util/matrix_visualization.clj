@@ -7,7 +7,7 @@
             [net.bjoc.advent.util.matrix :as mtx]))
 
 (defn- paint-color-value
-  [g x-min y-min width height color]
+  [#^Graphics g x-min y-min width height color]
     (doto g
       (.setColor color)
       (.fillRect x-min y-min width height)))

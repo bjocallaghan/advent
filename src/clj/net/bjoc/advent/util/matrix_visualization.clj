@@ -6,12 +6,16 @@
   (:require [clojure.string :as str]
             [net.bjoc.advent.util.matrix :as mtx]))
 
+(defn- paint-color-value
+  [g x-min y-min width height color]
+    (doto g
+      (.setColor color)
+      (.fillRect x-min y-min width height)))
+
 (defn- palletted-paint-char-value
   [pallette g x-min y-min width height value]
   (when-let [c (pallette value)]
-    (doto g
-      (.setColor c)
-      (.fillRect x-min y-min width height))))
+    (paint-color-value g x-min y-min width height c)))
 
 (defn- rand-color []
   (. Color getHSBColor (rand) (+ 0.25 (rand 0.5)) (+ 0.25 (rand 0.5))))
@@ -40,12 +44,13 @@
   "Attempts to guess an appropriate function for filling the element cells based
   on the provided options or the values found inside matrix."
   [matrix
-   & {:keys [pallette]
+   & {:keys [pallette type]
       :as options}]
   (cond
     pallette (partial palletted-paint-char-value pallette)
     :else
-    (case (mtx/guess-type matrix)
+    (case (or type (mtx/guess-type matrix))
+      :colors paint-color-value
       :characters (partial palletted-paint-char-value (generate-pallette matrix))
       :keywords (partial palletted-paint-char-value (generate-pallette matrix))
       )))

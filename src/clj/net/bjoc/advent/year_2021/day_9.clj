@@ -85,20 +85,29 @@
 
 (comment
   (require '[net.bjoc.advent.util.matrix-visualization :as vis])
+  (import '[java.awt Color])
 
   (let [filename "data/year_2021/day_9.input"
         matrix (file->matrix filename)
         low-point? (low-point-fn matrix)
+        rand-scaled-color-fn (fn []
+                               (let [hue (rand)
+                                     sat (+ 0.45 (rand 0.5))]
+                                 (fn [depth]
+                                   (. Color getHSBColor hue sat
+                                      (-> depth (/ 9.0) (* 0.6) (+ 0.3))))))
         basin-map (->> matrix
                        (filter low-point?)
                        (map (partial basin matrix))
                        (sort-by #(- (count %)))
-                       (map-indexed (fn [i basin]
-                                      (map (fn [xy] [i xy]) basin)))
+                       (map (fn [basin]
+                              (let [color-fn (rand-scaled-color-fn)]
+                                (map (fn [xy] [color-fn xy]) basin))))
                        (apply concat)
-                       (reduce (fn [m [i xy]]
-                                 (assoc m xy (char (+ i 64))))
+                       (reduce (fn [m [color-fn xy]]
+                                 (assoc m xy (color-fn (matrix xy))))
                                {}))]
     (vis/write-image-file basin-map "visualizations/2021_day_9.png"
+                          :type :colors :background-color (. Color darkGray)
                           :img-size [800 800]))
   )

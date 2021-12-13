@@ -131,14 +131,14 @@
                                             (dissoc :value-repr-fn)
                                             (assoc :paint-value-fn paint-value-fn)
                                             (assoc :img-size %))))
-        paint-panel-fn (fn [panel g]
+        paint-panel-fn (fn [panel #^Graphics g]
                          (let [[x y] (as-xy (.getSize panel))
                                lim (min x y)
                                x-offset (-> x (- lim) (quot 2))
                                y-offset (-> y (- lim) (quot 2))
                                img (img-fn [lim lim])]
                            (. g (drawImage img x-offset y-offset nil))
-                           (.dispose (. img (getGraphics)))))
+                           (.dispose #^Graphics (. img (getGraphics)))))
         panel (doto (proxy [JPanel] []
                       (paint [g]
                         (paint-panel-fn this g)))

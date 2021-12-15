@@ -40,12 +40,6 @@
   [chain rules num-times]
   (frequencies ((grow-fn rules) chain num-times)))
 
-(defn file->big-small-diff [filename]
-  (let [rules (file->rules filename)
-        chain (file->chain filename)
-        freqs (freqs-after-growth chain rules 10)]
-    (- (-> freqs vals sort last) (-> freqs vals sort first))))
-
 ;;;
 
 (defn inc* [x] (inc (or x 0)))
@@ -123,13 +117,44 @@
          (apply add-freqs)
          (add-freqs overcount-correction))))
 
-(defn file->big-small-diff* [filename]
-  (let [rules (file->rules filename)
-        chain (file->chain filename)
-        freqs (freqs-after-growth** chain rules 40)]
-    (- (-> freqs vals sort last) (-> freqs vals sort first))))
+;;;
+
+(defn add* [& args] (reduce + 0 (remove nil? args)))
+
+(defn evolve
+  ([rules pairs] (evolve rules 1 pairs))
+  ([rules num-times pairs]
+   (if (zero? num-times)
+     pairs
+     (recur rules
+            (dec num-times)
+            (reduce-kv (fn [m [a b] v]
+                         (if-let [c (rules [a b])]
+                           (-> m (update [a c] add* v) (update [c b] add* v))
+                           (update m [a b] add* v))) {} pairs)))))
+
+(defn unpair [last-element pairs]
+  (reduce-kv (fn [m [a b] v] (update m a add* v)) {last-element 1} pairs))
+
+(defn freqs-after-growth***
+  "Returns the frequencies of elements in a chain after a number of reactions.
+
+  Uses the 'counting pairs' method."
+  [chain rules num-times]
+  (->> (zip chain (drop 1 chain))
+       frequencies
+       (evolve rules num-times)
+       (unpair (last chain))))
 
 ;;;
 
-(advent/defrunner 1 file->big-small-diff "Difference between biggest and smallest")
-(advent/defrunner 2 file->big-small-diff* "Difference between biggest and smallest*")
+(defn file->big-small-diff
+  ([filename] (file->big-small-diff filename freqs-after-growth 10))
+  ([filename freqs-fn num-times]
+   (let [rules (file->rules filename)
+         chain (file->chain filename)
+         freqs (freqs-fn chain rules num-times)]
+     (- (-> freqs vals sort last) (-> freqs vals sort first)))))
+
+(advent/defrunner 1 file->big-small-diff "Big-small diff (10)")
+(advent/defrunner 2 file->big-small-diff "Big-small diff (40)" freqs-after-growth*** 40)

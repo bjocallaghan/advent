@@ -33,3 +33,14 @@
                         {:coll coll}
                         {:partial-coll rest5})))))
   (first coll))
+
+(defn take-until
+  "Take items from a collection until one of the items satisfies a predicate.
+
+  Return value includes the item which satisfied the predicate (unlike the very
+  close cousin, take-while)."
+  [pred coll]
+  (let [el (first coll)]
+    (lazy-seq (cons el (if (or (pred el) (empty? (rest coll)))
+                         nil
+                         (take-until pred (rest coll)))))))

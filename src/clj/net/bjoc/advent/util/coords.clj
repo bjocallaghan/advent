@@ -16,6 +16,11 @@
     (into [] (->> (partition (count all-coords) (apply interleave all-coords))
                   (map #(reduce + %))))))
 
+(defn scale
+  "Multiply a set of coords by a scalar."
+  [coords scalar]
+  (into [] (map #(* scalar %) coords)))
+
 (defn manhattan-distance
   "Return the Manhattan distance between a two points and another point (or the
   origin).

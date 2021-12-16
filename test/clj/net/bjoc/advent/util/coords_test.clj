@@ -18,6 +18,12 @@
   (testing "All arguments must be vectors of the same dimension"
     (is (thrown? Exception (add-coords [1 2] [3 4 5])))))
 
+(deftest scale-sanity
+  (is (= [6 9] (scale [2 3] 3)))
+  (is (= [2 4 6] (scale [1 2 3] 2)))
+  (is (= [-1 -2] (scale [1 2] -1)))
+  (is (= [0 0] (scale [1 2] 0))))
+
 (deftest manhattan-distance-sanity
   (testing "Manhattan distance from origin"
     (doseq [[coords expected-distance] [[[3 4] 7]

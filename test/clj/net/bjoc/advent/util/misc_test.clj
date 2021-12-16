@@ -22,3 +22,7 @@
   (is (= 4 (single [4])))
   (is (thrown? Exception (single [])))
   (is (thrown? Exception (single [4 5 6]))))
+
+(deftest take-until-sanity
+  (is (= [1 2 3] (take-until #(= % 3) [1 2 3 4 5])))
+  (is (= [1 2 3 4 5] (take-until #(= % 9) [1 2 3 4 5]))))

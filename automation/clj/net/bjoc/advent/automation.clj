@@ -3,9 +3,9 @@
 
 (def impl-template
 "(ns net.bjoc.advent.year-%s.day-%s
-  (:use [net.bjoc.advent.util.misc :only [zip]])
   (:require [clojure.string :as str]
-            [net.bjoc.advent.core :as advent]))
+            [net.bjoc.advent.core :as advent]
+            [net.bjoc.advent.util.misc :refer [zip]]))
   
 ;;;
 
@@ -16,8 +16,8 @@
 
 (def test-template
 "(ns net.bjoc.advent.year-%s.day-%s-test
-  (:use [clojure.test :only [is testing deftest]]
-        [net.bjoc.advent.year-%s.day-%s]))")
+  (:require [clojure.test :refer [is testing deftest]]
+            [net.bjoc.advent.year-%s.day-%s :refer :all]))")
 
 (def impl-filename-stem "src/clj/net/bjoc/advent/")
 (def test-filename-stem "test/clj/net/bjoc/advent/")

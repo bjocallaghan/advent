@@ -1,4 +1,5 @@
-(ns net.bjoc.advent.util.misc)
+(ns net.bjoc.advent.util.misc
+  (:require [clojure.string :as str]))
 
 (defn zip
   "Iterate over a sequence of collections, producing a sequence of an item from
@@ -44,3 +45,10 @@
     (lazy-seq (cons el (if (or (pred el) (empty? (rest coll)))
                          nil
                          (take-until pred (rest coll)))))))
+
+(defn file->lines
+  "Reads the entirety of a file and returns a sequence of its lines.
+
+  Simplicity at the expense of a line-by-line reader's efficiency."
+  [filename]
+  (-> filename slurp (str/split #"\n")))

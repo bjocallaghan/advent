@@ -97,8 +97,8 @@
 (defn- contains-whitespace? [s] (re-find #"\s" s))
 
 (defn- try-int-promote [matrix]
-  (if (every? int-str? (vals matrix))
-    (reduce (fn [m [k v]] (assoc m k (Integer/parseInt v))) {} matrix)
+  (if (every? int-str? (->> matrix vals (map str)))
+    (reduce (fn [m [k v]] (assoc m k (Integer/parseInt (str v)))) {} matrix)
     matrix))
 
 (defn from-string

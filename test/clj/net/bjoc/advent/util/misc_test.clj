@@ -25,4 +25,5 @@
 
 (deftest take-until-sanity
   (is (= [1 2 3] (take-until #(= % 3) [1 2 3 4 5])))
-  (is (= [1 2 3 4 5] (take-until #(= % 9) [1 2 3 4 5]))))
+  (is (= [1 2 3 4 5] (take-until #(= % 9) [1 2 3 4 5])))
+  (is (empty? (take-until #(= % 9) []))))

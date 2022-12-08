@@ -41,10 +41,11 @@
   Return value includes the item which satisfied the predicate (unlike the very
   close cousin, take-while)."
   [pred coll]
-  (let [el (first coll)]
-    (lazy-seq (cons el (if (or (pred el) (empty? (rest coll)))
-                         nil
-                         (take-until pred (rest coll)))))))
+  (when (not-empty coll)
+    (let [el (first coll)]
+      (lazy-seq (cons el (if (or (pred el) (empty? (rest coll)))
+                           nil
+                           (take-until pred (rest coll))))))))
 
 (defn file->lines
   "Reads the entirety of a file and returns a sequence of its lines.

@@ -4,12 +4,14 @@
             [net.bjoc.advent.util.matrix :as mtx]
             [net.bjoc.advent.util.misc :refer [zip take-until]]))
 
-(defn sightlines [matrix [x y]]
-  (let [[x-max y-max] (mtx/size matrix)]
-    [(reverse (for [x (range 0 x)] [x y]))
-     (for [x (range (inc x) x-max)] [x y])
-     (reverse (for [y (range 0 y)] [x y]))
-     (for [y (range (inc y) y-max)] [x y])]))
+(defn sightline [matrix xy direction]
+  (let [inner (fn inner [[x y] [dx dy]]
+                (lazy-seq (cons [x y] (inner [(+ x dx) (+ y dy)] [dx dy]))))]
+    (take-while matrix (inner xy direction))))
+
+(defn sightlines [matrix xy]
+  (map #(rest (sightline matrix xy %))
+       [[0 1] [0 -1] [1 0] [-1 0]]))
 
 (defn highest? [height heights]
   (empty? (remove #(< % height) heights)))
@@ -20,9 +22,7 @@
                                          (map #(map matrix %))))))
 
 (defn file->visible-tree-count [filename]
-  (let [matrix (-> filename
-                   slurp
-                   mtx/from-string)
+  (let [matrix (mtx/from-file filename)
         visible?* (partial visible-from-outside? matrix)]
     (->> (keys matrix)
          (filter visible?*)
@@ -31,7 +31,8 @@
 ;;;
 
 (defn scenic-score [matrix xy]
-  (let [taller? #(>= % (matrix xy))]
+  (let [height (matrix xy)
+        taller? #(>= % height)]
     (->> (sightlines matrix xy)
          (map #(map matrix %))
          (map #(take-until taller? %))
@@ -39,12 +40,9 @@
          (reduce *))))
 
 (defn file->best-scenic-score [filename]
-  (let [matrix (-> filename
-                   slurp
-                   mtx/from-string)
-        scenic-score* (partial scenic-score matrix)]
+  (let [matrix (mtx/from-file filename)]
     (->> (keys matrix)
-         (map scenic-score*)
+         (map (partial scenic-score matrix))
          (apply max))))
 
 ;;;

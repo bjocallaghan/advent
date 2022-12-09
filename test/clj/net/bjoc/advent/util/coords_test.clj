@@ -37,3 +37,9 @@
                   (str coords) expected-distance))))
   (testing "Manhattan distance between two points"
     (is (= 4 (manhattan-distance [1 2] [3 4])))))
+
+(deftest difference-sanity
+  (testing "Difference between two sets of coords"
+    (is (= [1 2] (difference [1 2] [0 0])))
+    (is (= [1 2] (difference [0 0] [-1 -2])))
+    (is (= [1 1 1 1 1] (difference [2 3 4 5 6] [1 2 3 4 5])))))

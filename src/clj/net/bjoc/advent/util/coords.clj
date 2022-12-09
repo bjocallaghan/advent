@@ -31,3 +31,8 @@
   ([[x y]] (manhattan-distance [x y] [0 0]))
   ([[x1 y1] [x2 y2]]
    (+ (Math/abs (- x1 x2)) (Math/abs (- y1 y2)))))
+
+(defn difference
+  "Return the difference between two sets of coordinates as a vector."
+  [c1 c2]
+  (add-coords c1 (scale c2 -1)))

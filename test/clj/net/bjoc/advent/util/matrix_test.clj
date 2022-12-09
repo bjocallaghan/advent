@@ -129,3 +129,13 @@
   (is (transform? numbers-4x4 flipped-4x4))
   (is (transform? numbers-4x4 rotated-4x4))
   (is (not (transform? numbers-4x4 numbers-2x2))))
+
+(deftest update-all-by-examples
+  (is (= {[0 0] 2  [1 0] 4 [0 1] 6 [1 1] 8} (update-all #(* 2 %) numbers-2x2)))
+  (is (= small-strings-2x2 (update-all str characters-2x2))))
+
+(deftest update-all-indexed-by-examples
+  (is (= {[0 0] 1  [1 0] 3 [0 1] 4 [1 1] 6}
+         (update-all-indexed #(reduce + (concat %1 [%2])) numbers-2x2)))
+  (is (= {[0 0] "[0 0]a" [1 0] "[1 0]b" [0 1] "[0 1]c" [1 1] "[1 1]d"}
+         (update-all-indexed str characters-2x2))))

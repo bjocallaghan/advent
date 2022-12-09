@@ -133,3 +133,17 @@
                    (= matrix-1 (-> matrix-2
                                    (rotate num-rotations)
                                    (flip num-flips))))))
+
+(defn update-all
+  "Transform a matrix by applying a function to each element.
+
+  The supplied function takes a single argument, the element's value."
+  [f matrix]
+  (reduce (fn [m [k v]] (assoc m k (f v))) {} matrix))
+
+(defn update-all-indexed
+  "Transform a matrix by applying a function to each indexed element.
+
+  The supplied function takes two arguments, the element's index and its value."
+  [f matrix]
+  (reduce (fn [m [k v]] (assoc m k (f k v))) {} matrix))

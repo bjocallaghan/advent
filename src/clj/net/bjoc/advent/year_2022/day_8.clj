@@ -39,13 +39,57 @@
          (map count)
          (reduce *))))
 
-(defn file->best-scenic-score [filename]
-  (let [matrix (mtx/from-file filename)]
-    (->> (keys matrix)
-         (map (partial scenic-score matrix))
-         (apply max))))
+(defn best-scenic-score [matrix]
+  (->> (keys matrix)
+       (map (partial scenic-score matrix))
+       (apply max)))
+
+(def file->best-scenic-score (comp best-scenic-score mtx/from-file))
 
 ;;;
 
 (advent/defrunner 1 file->visible-tree-count "Number of visible trees")
 (advent/defrunner 2 file->best-scenic-score "Best scenic score")
+
+;;;
+
+(comment
+  (require '[net.bjoc.advent.util.matrix-visualization :as vis])
+  (import '[java.awt Color])
+
+  (let [filename "data/year_2022/day_8.input"
+        color-fn #(. Color getHSBColor 0.3 0.8 (-> % (/ 9.0) (* 0.5) (+ 0.4)))
+        matrix (mtx/from-file filename)]
+    (vis/write-image-file (mtx/update-all color-fn matrix)
+                          "visualizations/2022_day_8_tree_heights.png"
+                          :type :colors :img-size [800 800]))
+
+  (let [filename "data/year_2022/day_8.input"
+        matrix (mtx/from-file filename)
+        color-fn #(if (visible-from-outside? matrix %1)
+                    (. Color getHSBColor 0.3 0.8 (-> %2 (/ 9.0) (* 0.5) (+ 0.4)))
+                    (. Color lightGray))]
+    (vis/write-image-file (mtx/update-all-indexed color-fn matrix)
+                          "visualizations/2022_day_8_visible_trees.png"
+                          :type :colors :img-size [800 800]))
+
+  (let [filename "data/year_2022/day_8.input"
+        matrix (mtx/from-file filename)
+        grade (let [squeeze #(Math/pow % 0.1)
+                    best-score (best-scenic-score matrix)]
+                #(-> % squeeze (/ (squeeze best-score)) (* 0.5) (+ 0.4)))
+        best-viewshed? (let [best-xy (->> (sort-by second #(compare %2 %1) matrix) first first)
+                             height (matrix best-xy)
+                             taller? #(>= (matrix %) height)]
+                         (conj (->> (sightlines matrix best-xy)
+                                    (map #(take-until taller? %))
+                                    (apply concat)
+                                    set)
+                               best-xy))
+        color-fn #(. Color getHSBColor (if (best-viewshed? %1) 0.55 0.3) 0.8 (grade %2))]
+    (vis/write-image-file (->> matrix
+                               (mtx/update-all-indexed (fn [xy _] (scenic-score matrix xy)))
+                               (mtx/update-all-indexed color-fn))
+                          "visualizations/2022_day_8_scenic_scores.png"
+                          :type :colors :img-size [800 800]))
+  )

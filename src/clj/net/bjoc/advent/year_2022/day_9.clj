@@ -4,8 +4,6 @@
             [net.bjoc.advent.util.coords :refer [add-coords difference]]
             [net.bjoc.advent.util.misc :refer [zip file->lines]]))
 
-(def starting-state {:head [0 0] :tail [0 0] :visited #{}})
-
 (defn line->moves [line]
   (let [[dir raw-n] (rest (re-find #"^(.) (\d+)$" line))]
     (repeat (Integer/parseInt raw-n) ({"R" [1 0]
@@ -21,13 +19,11 @@
 (defn make-knots [size]
   (vec (repeat size {:xy [0 0] :prev-xy [0 0] :visited #{}})))
 
-(defn smash [xy]
-  (mapv #(cond (zero? %) 0 (pos? %) 1 (neg? %) -1) xy))
-
 (defn move-tail [tail new-head]
-  (let [diff (difference new-head tail)]
+  (let [diff (difference new-head tail)
+        smashed-diff (mapv #(cond (zero? %) 0 (pos? %) 1 (neg? %) -1) diff)]
     (if (some #(>= (Math/abs %) 2) diff)
-      (add-coords (smash diff) tail)
+      (add-coords smashed-diff tail)
       tail)))
 
 (defn step [knots dir]

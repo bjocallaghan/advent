@@ -3,22 +3,12 @@
             [net.bjoc.advent.core :as advent]
             [net.bjoc.advent.util.misc :refer [file->lines]]))
 
-(defn make-handle-fn [line]
-  (let [[arg1 op arg2] (-> line
-                           (str/split #" = ")
-                           second
-                           (str/split #"\s"))]
-    ;; I'm a failure and a con-artist. I thought I could do this with macros and
-    ;; parsing, ultimately creating a function on the fly for arbitrary
-    ;; operations and more flexible input. But I couldn't figure out how to do
-    ;; it. *sob*
-    ;;
-    ;; Below is hard-coded / semi-arbitrary; suitable only for the today's
-    ;; example and my provided input.
-    (cond
-      (= arg2 "old") #(* % %)
-      (= op "+") #(+ % (Integer/parseInt arg2))
-      (= op "*") #(* % (Integer/parseInt arg2)))))
+(defmacro make-handle-fn [line]
+  (let [[arg1 op arg2] (map read-string (-> line
+                                            (str/split #" = ")
+                                            second
+                                            (str/split #"\s")))]
+    (concat '(fn [old]) `(~@(list op arg1 arg2)))))
 
 (defn make-target-fn [lines]
   (let [[a b c] (map #(Integer/parseInt %) (re-seq #"\d+" (str/join lines)))]

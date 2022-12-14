@@ -3,12 +3,13 @@
             [net.bjoc.advent.core :as advent]
             [net.bjoc.advent.util.misc :refer [file->lines]]))
 
-(defmacro make-handle-fn [line]
+(defn make-handle-fn [line]
   (let [[arg1 op arg2] (map read-string (-> line
                                             (str/split #" = ")
                                             second
                                             (str/split #"\s")))]
-    (concat '(fn [old]) `(~@(list op arg1 arg2)))))
+    (eval
+     (concat '(fn [old]) (list (list op arg1 arg2))))))
 
 (defn make-target-fn [lines]
   (let [[a b c] (map #(Integer/parseInt %) (re-seq #"\d+" (str/join lines)))]

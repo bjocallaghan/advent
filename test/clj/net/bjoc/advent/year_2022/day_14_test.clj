@@ -10,7 +10,7 @@
   (is (= #{[2 2] [3 2] [4 2]} (expand [4 2] [2 2]))))
 
 (deftest grain-count-by-example
-  (is (= 24 (file->grain-count* :abyss "data/year_2022/day_14_example1.input"))))
+  (is (= 24 (file->grain-count :abyss "data/year_2022/day_14_example1.input"))))
 
 (deftest grain-count-with-floor-by-example
-  (is (= 93 (file->grain-count* :floor "data/year_2022/day_14_example1.input"))))
+  (is (= 93 (file->grain-count :floor "data/year_2022/day_14_example1.input"))))

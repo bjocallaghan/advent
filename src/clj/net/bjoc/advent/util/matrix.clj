@@ -147,3 +147,14 @@
   The supplied function takes two arguments, the element's index and its value."
   [f matrix]
   (reduce (fn [m [k v]] (assoc m k (f k v))) {} matrix))
+
+(defn crop
+  "Eliminate cells from a matrix that don't fit in a cropping window."
+  [matrix lower-left-xy upper-right-xy]
+  (let [[x-min y-min] lower-left-xy
+        [x-max y-max] upper-right-xy
+        out-of-bounds? (some-fn (fn [[x _]] (> x x-max))
+                                (fn [[x _]] (< x x-min))
+                                (fn [[_ y]] (> y y-max))
+                                (fn [[_ y]] (< y y-min)))]
+    (into {} (remove (fn [[xy _]] (out-of-bounds? xy)) matrix))))

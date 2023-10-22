@@ -2,3 +2,6 @@
 .nrepl-port
 .rebl
 .dir-locals.el
+
+**/data/**/day_?.input
+**/data/**/day_??.input

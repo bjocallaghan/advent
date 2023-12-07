@@ -22,3 +22,6 @@
 
 (deftest file->best-location-by-example
   (is (= 35 (file->best-location "data/year_2023/day_5_example1.input"))))
+
+(deftest file->best-location-2-by-example
+  (is (= 46 (file->best-location-2 "data/year_2023/day_5_example1.input"))))

@@ -1,6 +1,7 @@
 (ns net.bjoc.advent.year-2023.day-8
   (:require [clojure.string :as str]
             [net.bjoc.advent.core :as advent]
+            [net.bjoc.advent.util.numeric :refer [lcm]]
             [net.bjoc.advent.util.misc :refer [file->lines]]))
 
 (defn file->state [filename]
@@ -13,16 +14,22 @@
                          [a {\L b \R c}])))
                 (into {}))}))
 
-(defn file->num-steps [filename]
-  (let [{:keys [directions maps]} (file->state filename)]
+(defn make-num-steps-fn [maps directions termination-pred]
+  (fn [loc]
     (loop [dist 0
-           loc "AAA"
+           loc loc
            directions directions]
-      (if (= loc "ZZZ")
+      (if (termination-pred loc)
         dist
         (recur (inc dist)
                (-> maps (get loc) (get (first directions)))
                (rest directions))))))
+
+(def zzz-loc? #(= % "ZZZ"))
+
+(defn file->num-steps [filename]
+  (let [{:keys [maps directions]} (file->state filename)]
+    ((make-num-steps-fn maps directions zzz-loc?) "AAA")))
 
 ;;;
 
@@ -31,14 +38,11 @@
 
 (defn file->num-ghost-steps [filename]
   (let [{:keys [directions maps]} (file->state filename)]
-    (loop [dist 0
-           locs (->> maps keys (filter a-loc?))
-           directions directions]
-      (if (->> locs (remove z-loc?) empty?)
-        dist
-        (recur (inc dist)
-               (map #(-> maps (get %) (get (first directions))) locs)
-               (rest directions))))))
+    (->> maps
+         keys
+         (filter a-loc?)
+         (map (make-num-steps-fn maps directions z-loc?))
+         (apply lcm))))
 
 ;;;
 

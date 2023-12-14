@@ -56,3 +56,48 @@
 
 (def not-prime? "Return truthy for a non-prime number."
   TRIAL_DIVISION*not-prime?)
+
+(defn prime-seq
+  "Return an infinite sequence of prime numbers."
+  []
+  (->> (int-seq 2)
+       (filter prime?)))
+
+(defn is-divisible-by
+  "Return truthy if `n` is divisible by `divisor`."
+  [n divisor]
+  (zero? (mod n divisor)))
+
+(defn prime-factorization
+  "Return the prime factorization of `n` as a map of prime factors and their exponents."
+  [n]
+  (let [get-cutoff #(-> % Math/sqrt long inc)
+        candidate-factors (take-while #(< % n) (prime-seq))
+        ans (->> candidate-factors
+                 (map (fn [factor]
+                        [factor
+                         (loop [times 0
+                                n n]
+                           (if (not (is-divisible-by n factor))
+                             times
+                             (recur (inc times)
+                                    (/ n factor))))]))
+                 (remove (fn [[_ times]] (zero? times)))
+                 (into {}))]
+    (if (empty? ans)
+      {n 1}
+      ans)))
+
+(def ^:private max* #(if (nil? %1) %2 (max %1 %2)))
+
+(defn lcm
+  "Return the least common multiple of a set of numbers."
+  [num & nums]
+  (let [nums (conj nums num)]
+    (->> nums
+         (mapcat prime-factorization)
+         (reduce (fn [m [d times]]
+                   (update m d max* times))
+                 {})
+         (mapcat (fn [[d times]] (repeat times d)))
+         (reduce *))))

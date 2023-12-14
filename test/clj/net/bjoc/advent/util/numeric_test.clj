@@ -29,3 +29,16 @@
   (is (= [1 2 3] (digit-seq 123)))
   (is (= [1 0 1 0] (digit-seq 1010))))
 
+(deftest prime-factorization-by-examples
+  (is (= {2 1} (prime-factorization 2)))
+  (is (= {3 1} (prime-factorization 3)))
+  (is (= {2 1 17 1} (prime-factorization 34)))
+  (is (= {2 3 3 2} (prime-factorization 72)))
+  (is (= {3 1 23 1} (prime-factorization 69)))
+  (is (= {79 1} (prime-factorization 79)))
+  (is (= {59 2 281 1} (prime-factorization 978161))))
+
+(deftest lcm-by-examples
+  (is (= 6 (lcm 2 3)))
+  (is (= 144 (lcm 72 16)))
+  (is (= 13334102464297 (lcm 18827 16579 13207 17141 14893 22199))))

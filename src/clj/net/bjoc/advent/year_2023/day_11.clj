@@ -2,8 +2,7 @@
   (:require [clojure.math.combinatorics :refer [combinations]]
             [net.bjoc.advent.core :as advent]
             [net.bjoc.advent.util.matrix :as mtx]
-            [net.bjoc.advent.util.coords :refer [manhattan-distance]]
-            [net.bjoc.advent.util.misc :refer [zip]]))
+            [net.bjoc.advent.util.coords :refer [manhattan-distance]]))
 
 (def into-pairs #(combinations % 2))
 

@@ -26,7 +26,7 @@
      :dir start-dir
      :m (assoc m pos \.)
      :looped? false
-     :halted? false}))
+     :running? true}))
 
 (defn evolve [{:keys [pos dir m visited*] :as state}]
   (let [maybe-next (add-coords pos dir)]
@@ -35,23 +35,19 @@
                looped? (boolean (visited* maybe-next*))]
            (-> state
                (assoc :pos maybe-next)
-               (assoc :halted? looped?)
+               (assoc :running? (not looped?))
                (assoc :looped? looped?)
                (update :visited conj maybe-next)
                (update :visited* conj maybe-next*)))
       \# (update state :dir turn)
       ;; else off the map
-      (update state :halted? not))))
+      (update state :running? not))))
 
-(defn run [state]
-  (loop [state state]
-    (if (:halted? state)
-      state
-      (recur (evolve state)))))
+(defn evolutions [state]
+  (lazy-seq (cons state (when (:running? state) (evolutions (evolve state))))))
 
-(def calc-visited-count #(-> (start-state %) run :visited count))
-
-(def file->visted-count (comp calc-visited-count mat/from-file))
+(def run #(first (drop-while :running? (evolutions %))))
+(def file->visted-count #(-> % mat/from-file start-state run :visited count))
 
 ;;;
 
